@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         <tr v-for="(book, index) in books" :key="index">
-          <td>{{ book.title }}</td>
+          <td>{{ book.title }}{{ index }}</td>
           <td>{{ book.startDate }}</td>
           <td>{{ book.endDate }}</td>
           <td>{{ book.rating }}</td>
@@ -148,7 +148,15 @@ export default {
             Authorization: `Bearer ${token}`,
           },
         });
-        this.books = response.data;
+        this.books = response.data.map((book) => ({
+          ...book,
+          startDate: book.start_date
+            ? new Date(book.start_date).toLocaleDateString()
+            : '',
+          endDate: book.end_date
+            ? new Date(book.end_date).toLocaleDateString()
+            : '',
+        }));
       } catch (error) {
         this.message = error.response.data;
       }

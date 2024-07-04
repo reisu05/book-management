@@ -140,7 +140,7 @@ app.get('/books', authenticateJWT, (req, res) => {
         return res.status(500).send('Server error');
       }
       res.status(200).json(results);
-      console.log(results);
+      // console.log(results);
     });
   });
 });
