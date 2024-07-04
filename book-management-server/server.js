@@ -28,6 +28,7 @@ db.connect((err) => {
   console.log('Connected to the MySQL database.');
 });
 
+//追加
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
@@ -44,6 +45,7 @@ app.post('/register', (req, res) => {
   });
 });
 
+//ログイン
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
@@ -78,6 +80,7 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
+//書籍登録
 app.post('/books', authenticateJWT, (req, res) => {
   const { book } = req.body;
   const email = req.user.email;
@@ -114,6 +117,7 @@ app.post('/books', authenticateJWT, (req, res) => {
   });
 });
 
+//書籍取得
 app.get('/books', authenticateJWT, (req, res) => {
   const email = req.user.email;
   const sqlGetUserId = 'SELECT id FROM users WHERE email = ?';
@@ -136,6 +140,8 @@ app.get('/books', authenticateJWT, (req, res) => {
     });
   });
 });
+
+//データ削除
 
 app.delete('/books', authenticateJWT, (req, res) => {
   const { bookIndex } = req.body;
@@ -176,6 +182,6 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.get('/verify-token', authenticateJWT, (req, res) => {
-  res.status(200).send('Token is valid');
-});
+// app.get('/verify-token', authenticateJWT, (req, res) => {
+//   res.status(200).send('Token is valid');
+// });

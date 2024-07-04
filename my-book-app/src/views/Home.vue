@@ -72,26 +72,10 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const token = localStorage.getItem('token');
 
-    // トークンの有効性を確認する
-    if (!token) {
+    // ログイン状態を確認する
+    if (!localStorage.getItem('token')) {
       router.push('/login');
-    } else {
-      axios
-        .get('http://localhost:5000/verify-token', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then(() => {
-          // トークンが有効
-        })
-        .catch(() => {
-          // トークンが無効
-          localStorage.removeItem('token');
-          router.push('/login');
-        });
     }
   },
 
