@@ -96,7 +96,7 @@ app.post('/books', authenticateJWT, (req, res) => {
     const userId = results[0].id;
     const sqlInsertBook = `
           INSERT INTO books (user_id, id, title, start_date, end_date, rating, thoughts)
-          VALUES (?, (SELECT COALESCE(MAX(id), 0) + 1 FROM books WHERE user_id = ?), ?, ?, ?, ?, ?)
+          VALUES (?,?, ?, ?, ?, ?, ?)
       `;
     db.query(
       sqlInsertBook,
@@ -140,6 +140,7 @@ app.get('/books', authenticateJWT, (req, res) => {
         return res.status(500).send('Server error');
       }
       res.status(200).json(results);
+      console.log(results);
     });
   });
 });
