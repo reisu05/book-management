@@ -18,3 +18,54 @@ CREATE TABLE books (
     thoughts TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 )
+
+
+
+
+
+//ver2
+
+
+CREATE TABLE books (
+    user_id INT,
+    id INT,
+    title VARCHAR(255),
+    start_date DATE,
+    end_date DATE,
+    rating INT,
+    thoughts TEXT,
+    PRIMARY KEY (user_id, id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+
+CREATE TABLE book_id_seq (
+    user_id INT,
+    next_id INT,
+    PRIMARY KEY (user_id)
+);
+
+
+
+
+DELIMITER //
+
+CREATE TRIGGER books_before_insert
+BEFORE INSERT ON books
+FOR EACH ROW
+BEGIN
+    DECLARE new_id INT;
+
+    -- 次のIDを取得
+    SELECT COALESCE(MAX(id), 0) + 1 INTO new_id FROM books WHERE user_id = NEW.user_id;
+
+    -- 次のIDを設定
+    SET NEW.id = new_id;
+
+    -- 次のIDをbook_id_seqに保存（必要に応じて）
+    INSERT INTO book_id_seq (user_id, next_id) VALUES (NEW.user_id, new_id)
+    ON DUPLICATE KEY UPDATE next_id = new_id;
+END//
+
+DELIMITER ;

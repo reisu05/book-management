@@ -94,11 +94,14 @@ app.post('/books', authenticateJWT, (req, res) => {
       return res.status(400).send('User not found');
     }
     const userId = results[0].id;
-    const sqlInsertBook =
-      'INSERT INTO books (user_id, title, start_date, end_date, rating, thoughts) VALUES (?, ?, ?, ?, ?, ?)';
+    const sqlInsertBook = `
+          INSERT INTO books (user_id, id, title, start_date, end_date, rating, thoughts)
+          VALUES (?, (SELECT COALESCE(MAX(id), 0) + 1 FROM books WHERE user_id = ?), ?, ?, ?, ?, ?)
+      `;
     db.query(
       sqlInsertBook,
       [
+        userId,
         userId,
         book.title,
         book.startDate,
