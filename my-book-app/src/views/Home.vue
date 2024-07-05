@@ -124,6 +124,7 @@ export default {
       }
     },
     async deleteBook(index) {
+      console.log(index);
       try {
         const token = localStorage.getItem('token');
         const response = await axios.delete('http://localhost:5000/books', {

@@ -69,3 +69,7 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+やることメモ
+Home.vueから上を上げる

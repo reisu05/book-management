@@ -150,6 +150,7 @@ app.get('/books', authenticateJWT, (req, res) => {
 app.delete('/books', authenticateJWT, (req, res) => {
   const { bookIndex } = req.body;
   const email = req.user.email;
+  console.log('メールアドレス' + req.user.email);
   const sqlGetUserId = 'SELECT id FROM users WHERE email = ?';
   db.query(sqlGetUserId, [email], (err, results) => {
     if (err) {
@@ -159,7 +160,9 @@ app.delete('/books', authenticateJWT, (req, res) => {
     if (results.length === 0) {
       return res.status(400).send('User not found');
     }
+    console.log('data', results);
     const userId = results[0].id;
+    console.log('ユーザーID', userId);
     const sqlGetBooks = 'SELECT * FROM books WHERE user_id = ?';
     db.query(sqlGetBooks, [userId], (err, results) => {
       if (err) {
@@ -169,9 +172,12 @@ app.delete('/books', authenticateJWT, (req, res) => {
       if (results.length <= bookIndex) {
         return res.status(400).send('Invalid book index');
       }
+      console.log('bookindex', bookIndex);
       const bookId = results[bookIndex].id;
-      const sqlDeleteBook = 'DELETE FROM books WHERE id = ?';
-      db.query(sqlDeleteBook, [bookId], (err, result) => {
+      console.log('bookId', bookId);
+      console.log(userId, bookId);
+      const sqlDeleteBook = 'DELETE FROM books WHERE (user_id = ?) && (id = ?)';
+      db.query(sqlDeleteBook, [userId, bookId], (err, result) => {
         if (err) {
           console.error('Error deleting book:', err);
           return res.status(500).send('Server error');
