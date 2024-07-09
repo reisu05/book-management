@@ -1,6 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const logoutButton = () => {
+  localStorage.removeItem('token');
+  // 遷移
+  router.push('/login');
+};
 </script>
 
 <template>
@@ -11,6 +18,7 @@ import { useRouter } from 'vue-router';
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/register">Register</router-link></li>
           <li><router-link to="/login">Login</router-link></li>
+          <li><button @click="logoutButton">ログアウトボタン</button></li>
         </ul>
       </nav>
     </header>
