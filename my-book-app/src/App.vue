@@ -1,11 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 const router = useRouter();
+const store = useStore();
+const isLoggedIn = computed(() => store.getters.isLoggedIn);
+
 const logoutButton = () => {
-  localStorage.removeItem('token');
-  // 遷移
+  store.dispatch('logout');
   router.push('/login');
 };
 </script>
@@ -16,9 +19,15 @@ const logoutButton = () => {
       <nav>
         <ul>
           <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/register">Register</router-link></li>
-          <li><router-link to="/login">Login</router-link></li>
-          <li><button @click="logoutButton">ログアウトボタン</button></li>
+          <li v-if="!isLoggedIn">
+            <router-link to="/register">Register</router-link>
+          </li>
+          <li v-if="!isLoggedIn">
+            <router-link to="/login">Login</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <button @click="logoutButton">Logout</button>
+          </li>
         </ul>
       </nav>
     </header>
@@ -60,6 +69,18 @@ nav a {
 }
 
 nav a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
   text-decoration: underline;
 }
 </style>
