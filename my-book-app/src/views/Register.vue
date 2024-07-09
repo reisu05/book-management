@@ -19,7 +19,7 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
+import { useStore } from 'vuex';
 export default {
   data() {
     return {
@@ -30,7 +30,8 @@ export default {
   },
   setup() {
     const router = useRouter();
-    return { router };
+    const store = useStore();
+    return { router, store };
   },
   methods: {
     async register() {
@@ -41,7 +42,7 @@ export default {
         });
         if (response.status === 201) {
           const token = response.data.token;
-          localStorage.setItem('token', token);
+          this.store.dispatch('login', token);
           this.router.push('/');
         }
       } catch (error) {
