@@ -73,7 +73,7 @@ export default {
   setup() {
     const router = useRouter();
 
-    // ログイン状態を確認する
+    //ログイン状態を確認する;
     if (!localStorage.getItem('token')) {
       router.push('/login');
     }
