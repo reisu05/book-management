@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         <tr v-for="(book, index) in books" :key="index">
-          <td>{{ book.title }}{{ index }}</td>
+          <td>{{ book.title }}</td>
           <td>{{ book.startDate }}</td>
           <td>{{ book.endDate }}</td>
           <td>{{ book.rating }}</td>
@@ -57,6 +57,7 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
   data() {
@@ -72,18 +73,28 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const store = useStore();
 
-    //ログイン状態を確認する;
-    if (!localStorage.getItem('token')) {
+    // トークンの有効期限をチェックする
+    store.dispatch('checkToken');
+    if (!store.getters.isLoggedIn) {
       router.push('/login');
     }
-  },
 
+    return { store, router };
+  },
   async created() {
     await this.fetchBooks();
   },
   methods: {
     async addBook() {
+      // トークンの有効期限をチェック
+      this.store.dispatch('checkToken');
+      if (!this.store.getters.isLoggedIn) {
+        this.router.push('/login');
+        return;
+      }
+
       // 入力された日付をDateオブジェクトに変換
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
@@ -124,7 +135,13 @@ export default {
       }
     },
     async deleteBook(index) {
-      console.log(index);
+      // トークンの有効期限をチェック
+      this.store.dispatch('checkToken');
+      if (!this.store.getters.isLoggedIn) {
+        this.router.push('/login');
+        return;
+      }
+
       try {
         const token = localStorage.getItem('token');
         const response = await axios.delete('http://localhost:5000/books', {
@@ -142,6 +159,13 @@ export default {
       }
     },
     async fetchBooks() {
+      // トークンの有効期限をチェック
+      this.store.dispatch('checkToken');
+      if (!this.store.getters.isLoggedIn) {
+        this.router.push('/login');
+        return;
+      }
+
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5000/books', {

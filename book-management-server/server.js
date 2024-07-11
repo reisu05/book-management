@@ -55,7 +55,7 @@ app.post('/login', (req, res) => {
       return res.status(500).send('Server error');
     }
     if (results.length > 0) {
-      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '10s' });
       res.status(200).json({ token });
     } else {
       res.status(400).send('Invalid email or password');
