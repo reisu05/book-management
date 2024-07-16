@@ -9,6 +9,6 @@ app.use(router);
 app.use(store);
 
 // アプリケーションのロード時にトークンの有効期限をチェックここでの挙動の違いを把握する
-//store.dispatch('checkToken');
+// store.dispatch('checkToken');
 
 app.mount('#app');

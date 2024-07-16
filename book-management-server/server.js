@@ -40,7 +40,7 @@ app.post('/register', (req, res) => {
       console.error('Error registering user:', err);
       return res.status(500).send('Server error');
     }
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '30s' });
     res.status(201).json({ token });
   });
 });
@@ -55,7 +55,7 @@ app.post('/login', (req, res) => {
       return res.status(500).send('Server error');
     }
     if (results.length > 0) {
-      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '10s' });
+      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '30s' });
       res.status(200).json({ token });
     } else {
       res.status(400).send('Invalid email or password');
@@ -95,8 +95,8 @@ app.post('/books', authenticateJWT, (req, res) => {
     }
     const userId = results[0].id;
     const sqlInsertBook = `
-          INSERT INTO books (user_id, id, title, start_date, end_date, rating, thoughts)
-          VALUES (?,?, ?, ?, ?, ?, ?)
+          INSERT INTO books (user_id, id, title, start_date, end_date, rating, thoughts ,genre)
+          VALUES (?,?, ?, ?, ?, ?, ?,?)
       `;
     db.query(
       sqlInsertBook,
@@ -108,6 +108,7 @@ app.post('/books', authenticateJWT, (req, res) => {
         book.endDate,
         book.rating,
         book.thoughts,
+        book.genre,
       ],
       (err, result) => {
         if (err) {

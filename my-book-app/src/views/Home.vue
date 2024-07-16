@@ -7,6 +7,10 @@
         <input type="text" v-model="title" required />
       </div>
       <div class="form-group">
+        <label for="genre">Genre:</label>
+        <input type="text" v-model="genre" required />
+      </div>
+      <div class="form-group">
         <label for="startDate">Start Date:</label>
         <input type="date" v-model="startDate" required />
       </div>
@@ -29,6 +33,7 @@
       <thead>
         <tr>
           <th>Title</th>
+          <th>Genre</th>
           <th>Start Date</th>
           <th>End Date</th>
           <th>Rating</th>
@@ -39,6 +44,7 @@
       <tbody>
         <tr v-for="(book, index) in books" :key="index">
           <td>{{ book.title }}</td>
+          <td>{{ book.genre }}</td>
           <td>{{ book.startDate }}</td>
           <td>{{ book.endDate }}</td>
           <td>{{ book.rating }}</td>
@@ -69,17 +75,18 @@ export default {
       thoughts: '',
       books: [],
       message: '',
+      genre: '',
     };
   },
   setup() {
     const router = useRouter();
     const store = useStore();
 
-    // トークンの有効期限をチェックする
+    //トークンの有効期限をチェックする;
     store.dispatch('checkToken');
-    if (!store.getters.isLoggedIn) {
-      router.push('/login');
-    }
+    // if (!store.getters.isLoggedIn) {
+    //   router.push('/login');
+    // }
 
     return { store, router };
   },
@@ -105,6 +112,7 @@ export default {
           endDate: this.endDate,
           rating: this.rating,
           thoughts: this.thoughts,
+          genre: this.genre,
         };
         try {
           const token = localStorage.getItem('token');
@@ -129,6 +137,7 @@ export default {
         this.endDate = '';
         this.rating = '';
         this.thoughts = '';
+        this.genre = '';
       } else {
         this.message =
           'End Dateに無効な値が入力されています。Start Dateより過去の日付を入力してください';
