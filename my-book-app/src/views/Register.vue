@@ -20,35 +20,30 @@
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { ref } from 'vue';
 export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      message: '',
-    };
-  },
   setup() {
+    const email = ref('');
+    const password = ref('');
+    const message = ref('');
     const router = useRouter();
     const store = useStore();
-    return { router, store };
-  },
-  methods: {
-    async register() {
+    const register = async () => {
       try {
         const response = await axios.post('http://localhost:5000/register', {
-          email: this.email,
-          password: this.password,
+          email: email.value,
+          password: password.value,
         });
         if (response.status === 201) {
           const token = response.data.token;
-          this.store.dispatch('login', token);
-          this.router.push('/');
+          store.dispatch('login', token);
+          router.push('/');
         }
       } catch (error) {
-        this.message = error.response.data;
+        message.value = error.response.data;
       }
-    },
+    };
+    return { register, email, password, message };
   },
 };
 </script>

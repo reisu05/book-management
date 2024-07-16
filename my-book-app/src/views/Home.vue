@@ -71,109 +71,97 @@
 
 <script>
 import axios from 'axios';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default {
-  data() {
-    return {
-      title: '',
-      startDate: '',
-      endDate: '',
-      rating: '',
-      thoughts: '',
-      books: [],
-      message: '',
-      genre: '',
-      genreOptions: [
-        '文学、評論',
-        'ノンフィクション',
-        'ビジネス、経済',
-        '歴史、地理',
-        '政治、社会',
-        '芸能、エンターテイメント',
-        'アート、建築、デザイン',
-        '人文、思想、宗教',
-        '暮らし、健康、料理',
-        'サイエンス、テクノロジー',
-        '趣味、実用',
-        'スポーツ、アウトドア',
-        'コミックス',
-      ],
-    };
-  },
   setup() {
+    const title = ref('');
+    const startDate = ref('');
+    const endDate = ref('');
+    const rating = ref('');
+    const thoughts = ref('');
+    const books = ref([]);
+    const message = ref('');
+    const genre = ref('');
+    const genreOptions = ref([
+      '文学、評論',
+      'ノンフィクション',
+      'ビジネス、経済',
+      '歴史、地理',
+      '政治、社会',
+      '芸能、エンターテイメント',
+      'アート、建築、デザイン',
+      '人文、思想、宗教',
+      '暮らし、健康、料理',
+      'サイエンス、テクノロジー',
+      '趣味、実用',
+      'スポーツ、アウトドア',
+      'コミックス',
+    ]);
+
     const router = useRouter();
     const store = useStore();
 
-    //トークンの有効期限をチェックする;
-    store.dispatch('checkToken');
-    // if (!store.getters.isLoggedIn) {
-    //   router.push('/login');
-    // }
-
-    return { store, router };
-  },
-  async created() {
-    await this.fetchBooks();
-  },
-  methods: {
-    async addBook() {
-      // トークンの有効期限をチェック
-      this.store.dispatch('checkToken');
-      if (!this.store.getters.isLoggedIn) {
-        this.router.push('/login');
-        return;
+    const checkTokenAndRedirect = () => {
+      store.dispatch('checkToken');
+      if (!store.getters.isLoggedIn) {
+        router.push('/login');
       }
+    };
 
-      // 入力された日付をDateオブジェクトに変換
-      const start = new Date(this.startDate);
-      const end = new Date(this.endDate);
+    onMounted(async () => {
+      checkTokenAndRedirect();
+      await fetchBooks();
+    });
+
+    const addBook = async () => {
+      checkTokenAndRedirect();
+      if (!store.getters.isLoggedIn) return;
+
+      const start = new Date(startDate.value);
+      const end = new Date(endDate.value);
       if (start <= end) {
         const book = {
-          title: this.title,
-          startDate: this.startDate,
-          endDate: this.endDate,
-          rating: this.rating,
-          thoughts: this.thoughts,
-          genre: this.genre,
+          title: title.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
+          rating: rating.value,
+          thoughts: thoughts.value,
+          genre: genre.value,
         };
         try {
           const token = localStorage.getItem('token');
           const response = await axios.post(
             'http://localhost:5000/books',
-            {
-              book,
-            },
+            { book },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
-          this.message = response.data;
-          this.books.push(book);
+          message.value = response.data;
+          books.value.push(book);
         } catch (error) {
-          this.message = error.response.data;
+          message.value = error.response.data;
         }
-        this.title = '';
-        this.startDate = '';
-        this.endDate = '';
-        this.rating = '';
-        this.thoughts = '';
-        this.genre = '';
+        title.value = '';
+        startDate.value = '';
+        endDate.value = '';
+        rating.value = '';
+        thoughts.value = '';
+        genre.value = '';
       } else {
-        this.message =
+        message.value =
           'End Dateに無効な値が入力されています。Start Dateより過去の日付を入力してください';
       }
-    },
-    async deleteBook(index) {
-      // トークンの有効期限をチェック
-      this.store.dispatch('checkToken');
-      if (!this.store.getters.isLoggedIn) {
-        this.router.push('/login');
-        return;
-      }
+    };
+
+    const deleteBook = async (index) => {
+      checkTokenAndRedirect();
+      if (!store.getters.isLoggedIn) return;
 
       try {
         const token = localStorage.getItem('token');
@@ -185,19 +173,16 @@ export default {
             Authorization: `Bearer ${token}`,
           },
         });
-        this.message = response.data;
-        this.books.splice(index, 1);
+        message.value = response.data;
+        books.value.splice(index, 1);
       } catch (error) {
-        this.message = error.response.data;
+        message.value = error.response.data;
       }
-    },
-    async fetchBooks() {
-      // トークンの有効期限をチェック
-      this.store.dispatch('checkToken');
-      if (!this.store.getters.isLoggedIn) {
-        this.router.push('/login');
-        return;
-      }
+    };
+
+    const fetchBooks = async () => {
+      checkTokenAndRedirect();
+      if (!store.getters.isLoggedIn) return;
 
       try {
         const token = localStorage.getItem('token');
@@ -206,7 +191,7 @@ export default {
             Authorization: `Bearer ${token}`,
           },
         });
-        this.books = response.data.map((book) => ({
+        books.value = response.data.map((book) => ({
           ...book,
           startDate: book.start_date
             ? new Date(book.start_date).toLocaleDateString()
@@ -216,9 +201,24 @@ export default {
             : '',
         }));
       } catch (error) {
-        this.message = error.response.data;
+        message.value = error.response.data;
       }
-    },
+    };
+
+    return {
+      title,
+      startDate,
+      endDate,
+      rating,
+      thoughts,
+      books,
+      message,
+      genre,
+      genreOptions,
+      addBook,
+      deleteBook,
+      fetchBooks,
+    };
   },
 };
 </script>
@@ -269,7 +269,8 @@ h1 {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
