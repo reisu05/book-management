@@ -8,7 +8,16 @@
       </div>
       <div class="form-group">
         <label for="genre">Genre:</label>
-        <input type="text" v-model="genre" required />
+        <select v-model="genre" required>
+          <option disabled value="">Please select one</option>
+          <option
+            v-for="genreOption in genreOptions"
+            :key="genreOption"
+            :value="genreOption"
+          >
+            {{ genreOption }}
+          </option>
+        </select>
       </div>
       <div class="form-group">
         <label for="startDate">Start Date:</label>
@@ -76,6 +85,21 @@ export default {
       books: [],
       message: '',
       genre: '',
+      genreOptions: [
+        '文学、評論',
+        'ノンフィクション',
+        'ビジネス、経済',
+        '歴史、地理',
+        '政治、社会',
+        '芸能、エンターテイメント',
+        'アート、建築、デザイン',
+        '人文、思想、宗教',
+        '暮らし、健康、料理',
+        'サイエンス、テクノロジー',
+        '趣味、実用',
+        'スポーツ、アウトドア',
+        'コミックス',
+      ],
     };
   },
   setup() {
