@@ -28,6 +28,9 @@ const logoutButton = () => {
           <li v-if="isLoggedIn">
             <button @click="logoutButton">Logout</button>
           </li>
+          <li v-if="isLoggedIn">
+            <router-link to="/graph">Graph</router-link>
+          </li>
         </ul>
       </nav>
     </header>

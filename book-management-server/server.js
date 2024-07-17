@@ -40,7 +40,7 @@ app.post('/register', (req, res) => {
       console.error('Error registering user:', err);
       return res.status(500).send('Server error');
     }
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '10s' });
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '60s' });
     res.status(201).json({ token });
   });
 });
@@ -55,7 +55,7 @@ app.post('/login', (req, res) => {
       return res.status(500).send('Server error');
     }
     if (results.length > 0) {
-      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '10s' });
+      const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '60s' });
       res.status(200).json({ token });
     } else {
       res.status(400).send('Invalid email or password');
@@ -185,6 +185,60 @@ app.delete('/books', authenticateJWT, (req, res) => {
         }
         res.status(200).send('Book deleted');
       });
+    });
+  });
+});
+
+//ジャンル別データ取得
+app.get('/books/genre-stats', authenticateJWT, (req, res) => {
+  const email = req.user.email;
+  const sqlGetUserId = 'SELECT id FROM users WHERE email = ?';
+  db.query(sqlGetUserId, [email], (err, results) => {
+    if (err) {
+      console.error('Error fetching user ID:', err);
+      return res.status(500).send('Server error');
+    }
+    const userId = results[0].id;
+    const sqlGenreStats = `
+      SELECT genre, COUNT(*) as count 
+      FROM books 
+      WHERE user_id = ? 
+      GROUP BY genre
+    `;
+    db.query(sqlGenreStats, [userId], (err, results) => {
+      if (err) {
+        console.error('Error fetching genre stats:', err);
+        return res.status(500).send('Server error');
+      }
+      res.status(200).json(results);
+    });
+  });
+});
+
+//月別データ取得
+app.get('/books/month-stats', authenticateJWT, (req, res) => {
+  const email = req.user.email;
+  const sqlGetUserId = 'SELECT id FROM users WHERE email = ?';
+  db.query(sqlGetUserId, [email], (err, results) => {
+    if (err) {
+      console.error('Error fetching user ID:', err);
+      return res.status(500).send('Server error');
+    }
+    const userId = results[0].id;
+    const sqlMonthStats = `
+      SELECT DATE_FORMAT(start_date, '%Y-%m') as month, COUNT(*) as count 
+      FROM books 
+      WHERE user_id = ? 
+      GROUP BY month
+      ORDER BY month
+    `;
+    db.query(sqlMonthStats, [userId], (err, results) => {
+      if (err) {
+        console.error('Error fetching month stats:', err);
+        return res.status(500).send('Server error');
+      }
+      res.status(200).json(results);
+      console.log(results);
     });
   });
 });
