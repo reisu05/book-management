@@ -1,9 +1,14 @@
 <template>
   <div>
     <h2>ジャンル別読書データ</h2>
-    <canvas id="genreChart"></canvas>
+    <div class="chart-container">
+      <canvas id="genreChart"></canvas>
+    </div>
     <h2>月別読書データ</h2>
-    <canvas id="monthChart"></canvas>
+    <div class="chart-container">
+      <canvas id="monthChart"></canvas>
+    </div>
+    <p>{{ monthData }}</p>
   </div>
 </template>
 
@@ -75,9 +80,12 @@ export default {
               },
             ],
           },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
         });
       }
-
       if (monthData.value.length > 0) {
         new Chart(document.getElementById('monthChart'), {
           type: 'bar',
@@ -91,15 +99,23 @@ export default {
               },
             ],
           },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
         });
       }
     });
-
-    return { store };
+    return { store, monthData };
   },
 };
 </script>
 
 <style scoped>
-/* 必要に応じてスタイルを追加 */
+.chart-container {
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+  margin: 0 auto;
+}
 </style>
