@@ -73,3 +73,18 @@ DELIMITER ;
 
 やることメモ
 Home.vueから上を上げる
+
+
+DELIMITER //
+
+CREATE TRIGGER books_after_delete
+AFTER DELETE ON books
+FOR EACH ROW
+BEGIN
+    -- 現在のuser_idに対応するnext_idの値を-1する
+    UPDATE book_id_seq
+    SET next_id = next_id - 1
+    WHERE user_id = OLD.user_id;
+END//
+
+DELIMITER ;

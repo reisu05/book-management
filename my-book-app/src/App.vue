@@ -20,7 +20,7 @@ const logoutButton = () => {
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li v-if="!isLoggedIn">
-            <router-link to="/register">Register</router-link>
+            <router-link to="/register">新規会員登録</router-link>
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/login">Login</router-link>

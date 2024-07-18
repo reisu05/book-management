@@ -8,7 +8,6 @@
     <div class="chart-container">
       <canvas id="monthChart"></canvas>
     </div>
-    <p>{{ monthData }}</p>
   </div>
 </template>
 
