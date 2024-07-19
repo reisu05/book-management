@@ -41,12 +41,12 @@
     <table class="book-table">
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Genre</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Rating</th>
-          <th>Thoughts</th>
+          <th>タイトル</th>
+          <th>ジャンル</th>
+          <th>読み始めた日</th>
+          <th>読み終わった日</th>
+          <th>評価(5段階)</th>
+          <th>一言コメント</th>
           <th>Actions</th>
         </tr>
       </thead>
