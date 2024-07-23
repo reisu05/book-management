@@ -7,17 +7,17 @@ const app = express();
 const PORT = 5000;
 
 // JWT秘密鍵
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = 'your_jwt_secret_key';
 
 app.use(bodyParser.json());
 app.use(cors());
 
 // MySQLデータベース接続
 const db = mysql.createConnection({
-  host: process.env.MYSQL_HOST.trim(),
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: 'localhost',
+  user: 'root',
+  password: 'g022c1048', // MySQLのパスワードを設定
+  database: 'book_management',
 });
 
 db.connect((err) => {
